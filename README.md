@@ -1,4 +1,4 @@
-# app_font_viewer
+# app-font-viewer
 
 ![screenshot](app_font_viewer_screenshot.png)
 
