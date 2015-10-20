@@ -2,7 +2,8 @@
 
 #include <pebble.h>
 
-#define PADDING 5
+#define X_PADDING PBL_IF_RECT_ELSE(5, 0)
+#define Y_PADDING PBL_IF_RECT_ELSE(0, 20)
 #define REPEAT_INTERVAL_MS 100
 
 static Window *s_main_window;
@@ -32,23 +33,33 @@ static void up_single_click_handler(ClickRecognizerRef recognizer, void *context
 }
 
 static void click_config_provider(void *context) {
-  window_single_repeating_click_subscribe(BUTTON_ID_UP, REPEAT_INTERVAL_MS, up_single_click_handler);
-  window_single_repeating_click_subscribe(BUTTON_ID_DOWN, REPEAT_INTERVAL_MS, down_single_click_handler);
+  window_single_repeating_click_subscribe(BUTTON_ID_UP, REPEAT_INTERVAL_MS, 
+                                          up_single_click_handler);
+  window_single_repeating_click_subscribe(BUTTON_ID_DOWN, REPEAT_INTERVAL_MS, 
+                                          down_single_click_handler);
 }
 
 static void main_window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  s_text_layer = text_layer_create((GRect) { { PADDING, 0 }, { bounds.size.w - 2*PADDING, bounds.size.h } });
+  s_text_layer = text_layer_create((GRect) { { X_PADDING, Y_PADDING }, 
+                                             { bounds.size.w - 2 * X_PADDING, bounds.size.h } });
   text_layer_set_text(s_text_layer, s_text_buffer);
-  text_layer_set_font(s_text_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_UNICONS_30)));
+  text_layer_set_font(s_text_layer, 
+                      fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_UNICONS_30)));
   layer_add_child(window_layer, text_layer_get_layer(s_text_layer));
 
-  s_char_text_layer = text_layer_create((GRect) { { PADDING, bounds.size.h - 60 }, { bounds.size.w - 2*PADDING, 40 } });
+  s_char_text_layer = text_layer_create((GRect) { { X_PADDING, bounds.size.h - 60 }, 
+                                                  { bounds.size.w - 2 * X_PADDING, 40 } });
   text_layer_set_text(s_char_text_layer, s_text_buffer);
   text_layer_set_font(s_char_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
   layer_add_child(window_layer, text_layer_get_layer(s_char_text_layer));
+
+#ifdef PBL_ROUND
+  text_layer_set_text_alignment(s_text_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignment(s_char_text_layer, GTextAlignmentCenter);
+#endif
 }
 
 static void main_window_unload(Window *window) {
