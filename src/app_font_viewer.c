@@ -56,10 +56,10 @@ static void main_window_load(Window *window) {
   text_layer_set_font(s_char_text_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
   layer_add_child(window_layer, text_layer_get_layer(s_char_text_layer));
 
-#ifdef PBL_ROUND
-  text_layer_set_text_alignment(s_text_layer, GTextAlignmentCenter);
-  text_layer_set_text_alignment(s_char_text_layer, GTextAlignmentCenter);
-#endif
+  text_layer_set_text_alignment(s_text_layer, PBL_IF_ROUND_ELSE(GTextAlignmentCenter, 
+                                                                GTextAlignmentLeft));
+  text_layer_set_text_alignment(s_char_text_layer, PBL_IF_ROUND_ELSE(GTextAlignmentCenter, 
+                                                                     GTextAlignmentLeft));
 }
 
 static void main_window_unload(Window *window) {
